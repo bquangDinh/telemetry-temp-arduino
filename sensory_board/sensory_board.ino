@@ -12,7 +12,7 @@
 #define CAN_BAUDRATE CAN_500KBPS
 #define SERIAL_BAUDRATE 115200
 #define SENDING_CAN_PERIOD 1000 // Sending to CAN bus every 1s
-#define BOARD_ID 0x110
+#define BOARD_ID 0x112
 
 #define SENSOR_1_ONEWIRE_BUS 3
 #define SENSOR_2_ONEWIRE_BUS 4
