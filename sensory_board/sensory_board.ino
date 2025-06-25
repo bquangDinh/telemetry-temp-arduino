@@ -12,7 +12,7 @@
 #define CAN_BAUDRATE CAN_500KBPS
 #define SERIAL_BAUDRATE 115200
 #define SENDING_CAN_PERIOD 1000 // Sending to CAN bus every 1s
-#define BOARD_ID 0x112
+#define BOARD_ID 0x10C
 
 #define SENSOR_1_ONEWIRE_BUS 3
 #define SENSOR_2_ONEWIRE_BUS 4
@@ -132,29 +132,20 @@ void send_temp_to_can() {
   temp1.f = tempGroup1;
   temp2.f = tempGroup2;
 
-  // Send data of the first sensor
-  stmp[0] = 0;  // ID of the sensor
-
+  // Send data of the two sensors
+  // Data of the first sensor will be in the first 4 bytes
+  // Data of the second sensor will be in the last 4 bytes
   // Assign the float to the next 4 bytes of the CAN message
-  for (int i = 1; i < 5; ++i) {
-    stmp[i] = temp1.bytes[i - 1];
+  for (int i = 0; i < 4; ++i) {
+    stmp[i] = temp1.bytes[i];
+  }
+
+  for (int i = 4; i < 8; ++i) {
+    stmp[i] = temp2.bytes[i - 4];
   }
 
   // send data
   CAN.sendMsgBuf(BOARD_ID, 0, 8, stmp);
 
-  DBG("[CAN BUS] Send temp sensor #1 ok!");
-
-  // Send data of the second sensor
-  stmp[0] = 1;  // ID of the sensor
-
-  // Assign the float to the next 4 bytes of the CAN message
-  for (int i = 1; i < 5; ++i) {
-    stmp[i] = temp2.bytes[i - 1];
-  }
-
-  // send data
-  CAN.sendMsgBuf(BOARD_ID, 0, 8, stmp);
-
-  DBG("[CAN BUS] Send temp sensor #2 ok!");
+  DBG("[CAN BUS] Send sensor ok!");
 }
